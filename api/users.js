@@ -30,11 +30,13 @@ router.get("/test", (req, res) =>
 // @desc Log user in
 // @access Public
 router.post("/login", (req, res) => {
+  //Validate input
   const { errors, isValid } = validateLoginInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
+  //Check if password matches
   if (
     req.body.email === db.users[0].email &&
     req.body.password === db.users[0].password
@@ -49,12 +51,22 @@ router.post("/login", (req, res) => {
 // @desc Sign new user in
 // @access Public
 router.post("/signup", (req, res) => {
+  //Validate input
   const { errors, isValid } = validateSignupInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
   try {
+    //Check if user already exists
+    const user = db.users.filter(user => user.email === req.body.email);
+
+    if (user.length) {
+      //Return error if user already exists
+      return res.status(400).json("User already exists");
+    }
+
+    // Create new user
     const newUser = {
       id: id,
       ...req.body
