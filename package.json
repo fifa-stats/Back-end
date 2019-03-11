@@ -1,0 +1,28 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "description": "Back-end for Fifa19 project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fifa-stats/Back-end.git"
+  },
+  "author": "Vu Cao <cdhvu@yahoo.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fifa-stats/Back-end/issues"
+  },
+  "homepage": "https://github.com/fifa-stats/Back-end#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
