@@ -3,6 +3,9 @@ const router = express.Router();
 
 //import validators
 const validateLoginInput = require("../validation/login");
+const validateSignupInput = require("../validation/signup");
+
+let id = 2;
 
 const db = {
   users: [
@@ -29,7 +32,7 @@ router.get("/test", (req, res) =>
 router.post("/login", (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
   if (!isValid) {
-    res.status(400).json(errors);
+    return res.status(400).json(errors);
   }
 
   if (
@@ -38,7 +41,30 @@ router.post("/login", (req, res) => {
   ) {
     res.json("success");
   } else {
-    res.status(401).json("Error logging in");
+    res.status(401).json(error.message);
+  }
+});
+
+// @route POST api/users/signup
+// @desc Sign new user in
+// @access Public
+router.post("/signup", (req, res) => {
+  const { errors, isValid } = validateSignupInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  try {
+    const newUser = {
+      id: id,
+      ...req.body
+    };
+    id++;
+    db.users.push(newUser);
+
+    res.status(201).json(db.users[db.users.length - 1]);
+  } catch (error) {
+    res.status(400).json(error.message);
   }
 });
 
