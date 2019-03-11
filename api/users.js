@@ -32,13 +32,6 @@ const db = {
   users: []
 };
 
-// @route GET api/users/test
-// @desc Test users route
-// @access Public
-router.get("/test", (req, res) =>
-  res.status(200).json({ message: "User route works" })
-);
-
 // @route POST api/users/login
 // @desc Log user in
 // @access Public
@@ -95,7 +88,6 @@ router.post("/signup", (req, res) => {
     };
     id++;
     db.users.push(newUser);
-    console.log(newUser);
     //Create a json web token with username and send back to client
     const token = generateToken(newUser);
 
