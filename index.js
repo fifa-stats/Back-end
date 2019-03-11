@@ -1,8 +1,12 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const users = require("./api/user");
 
 const app = express();
+
+//middlewares
+app.use(bodyParser.json());
 
 // @route GET /test
 // @desc Test server
