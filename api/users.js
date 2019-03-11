@@ -1,22 +1,17 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 const router = express.Router();
 
 //import validators
 const validateLoginInput = require("../validation/login");
 const validateSignupInput = require("../validation/signup");
 
-let id = 2;
+let id = 1;
 
 const db = {
-  users: [
-    {
-      id: "1",
-      fname: "Vu",
-      lname: "Cao",
-      email: "vcao@gmail.com",
-      password: "123456"
-    }
-  ]
+  users: []
 };
 
 // @route GET api/users/test
@@ -43,7 +38,7 @@ router.post("/login", (req, res) => {
   ) {
     res.json("success");
   } else {
-    res.status(401).json(error.message);
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -59,24 +54,29 @@ router.post("/signup", (req, res) => {
 
   try {
     //Check if user already exists
-    const user = db.users.filter(user => user.email === req.body.email);
+    const existingUser = db.users.filter(user => user.email === req.body.email);
 
-    if (user.length) {
+    if (existingUser.length) {
       //Return error if user already exists
-      return res.status(400).json("User already exists");
+      return res.status(400).json({ error: "User already exists" });
     }
+
+    //hash password using bcrypt
+    const user = req.body;
+    const hash = bcrypt.hashSync(req.body.password, 12);
+    user.password = hash;
 
     // Create new user
     const newUser = {
       id: id,
-      ...req.body
+      ...user
     };
     id++;
     db.users.push(newUser);
 
     res.status(201).json(db.users[db.users.length - 1]);
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(400).json({ error: error.message });
   }
 });
 
