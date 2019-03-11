@@ -8,6 +8,20 @@ const router = express.Router();
 const validateLoginInput = require("../validation/login");
 const validateSignupInput = require("../validation/signup");
 
+//Generate json web token
+function generateToken(user) {
+  const username = user.fname + " " + user.lname;
+  const payload = {
+    username
+  };
+
+  const options = {
+    expiresIn: "1h"
+  };
+
+  return jwt.sign(payload, jwtKey, options);
+}
+
 let id = 1;
 
 const db = {
@@ -31,14 +45,18 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
+  //Get user from db
+  const user = db.users.filter(user => user.password === req.body.password);
+
   //Check if password matches
-  if (
-    req.body.email === db.users[0].email &&
-    req.body.password === db.users[0].password
-  ) {
-    res.json("success");
+  const match = bcrypt.compareSync(req.body.password, user.password);
+  if (match) {
+    //If match generate a json web token and send back to client
+    const token = generateToken(req.body);
+    res.status(200).json(token);
   } else {
-    res.status(400).json({ error: error.message });
+    //If not return error
+    res.status(400).json({ error: "Failed to login" });
   }
 });
 
@@ -74,7 +92,10 @@ router.post("/signup", (req, res) => {
     id++;
     db.users.push(newUser);
 
-    res.status(201).json(db.users[db.users.length - 1]);
+    //Create a json web token with username and send back to client
+    const token = generateToken(newUser);
+
+    res.status(201).json(token);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
