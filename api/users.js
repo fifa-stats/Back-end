@@ -1,14 +1,18 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const router = express.Router();
+dotenv.config();
 
 //import validators
 const validateLoginInput = require("../validation/login");
 const validateSignupInput = require("../validation/signup");
 
 //Generate json web token
+const jwtKey = process.env.SECRET;
+
 function generateToken(user) {
   const username = user.fname + " " + user.lname;
   const payload = {
@@ -46,10 +50,10 @@ router.post("/login", (req, res) => {
   }
 
   //Get user from db
-  const user = db.users.filter(user => user.password === req.body.password);
+  const user = db.users.filter(user => user.email === req.body.email);
 
   //Check if password matches
-  const match = bcrypt.compareSync(req.body.password, user.password);
+  const match = bcrypt.compareSync(req.body.password, user[0].password);
   if (match) {
     //If match generate a json web token and send back to client
     const token = generateToken(req.body);
@@ -91,7 +95,7 @@ router.post("/signup", (req, res) => {
     };
     id++;
     db.users.push(newUser);
-
+    console.log(newUser);
     //Create a json web token with username and send back to client
     const token = generateToken(newUser);
 
