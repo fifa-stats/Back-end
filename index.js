@@ -6,6 +6,7 @@ const passport = require("passport");
 
 const users = require("./api/users");
 const teams = require("./api/teams");
+const players = require("./api/players");
 
 const app = express();
 
@@ -23,6 +24,7 @@ require("./config/passport")(passport);
 //Use Routes
 app.use("/api/users", users);
 app.use("/api/teams", teams);
+app.use("/api/players", players);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`App is running on port ${PORT}`));
