@@ -39,4 +39,22 @@ router.post(
   }
 );
 
+// @route DELETE api/teams/:id
+// @desc Delete team
+// @access Private
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const response = await db.deleteTeam(req.params.id);
+      res.status(200).json(response);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: "Failed to delete team", error: error.message });
+    }
+  }
+);
+
 module.exports = router;
