@@ -1,12 +1,14 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable("teams", function(teams) {
-    teams.increments();
+    teams.increments().primary();
     teams.string("name", 30).notNullable();
     teams
       .integer("user_id")
       .unsigned()
+      .notNullable()
       .references("id")
-      .inTable("users");
+      .inTable("users")
+      .onDelete("cascade");
   });
 };
 
