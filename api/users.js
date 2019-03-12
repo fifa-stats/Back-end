@@ -17,7 +17,9 @@ const jwtKey = process.env.SECRET;
 function generateToken(user) {
   const username = user.fname + " " + user.lname;
   const payload = {
-    username
+    id: user.id,
+    username,
+    email: user.email
   };
 
   const options = {
@@ -39,7 +41,6 @@ router.post("/login", async (req, res) => {
 
   //Get user from db
   const user = await db.findUser(req.body.email);
-
   //Return error if cannot find user
   if (!user) {
     return res.status(400).json({ error: "User does not exists" });
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
   const match = bcrypt.compareSync(req.body.password, user.password);
   if (match) {
     //If match generate a json web token and send back to client
-    const token = generateToken(user);
+    const token = "Bearer " + generateToken(user);
     res.status(200).json(token);
   } else {
     //If not return error
@@ -86,7 +87,7 @@ router.post("/signup", async (req, res) => {
     const response = await db.signup(newUser);
 
     //Create a json web token with username and send back to client
-    const token = generateToken(response[0]);
+    const token = "Bearer " + generateToken(response[0]);
 
     res.status(201).json(token);
   } catch (error) {

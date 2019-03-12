@@ -12,7 +12,7 @@ const findUser = async email => {
 const signup = async user => {
   const query = await db("users")
     .insert(user)
-    .returning("fname", "lname");
+    .returning(["id", "email", "fname", "lname"]);
 
   return query;
 };
