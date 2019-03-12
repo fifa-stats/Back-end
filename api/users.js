@@ -67,26 +67,22 @@ router.post("/signup", async (req, res) => {
     return res.status(400).json(errors);
   }
 
+  const newUser = req.body;
+
   try {
     //Check if user already exists
-    // const existingUser = db.users.filter(user => user.email === req.body.email);
-    const existingUser = await db.findUser(req.body.email);
+    const existingUser = await db.findUser(newUser.email);
 
+    //Return error if user already exists
     if (existingUser) {
-      //Return error if user already exists
       return res.status(400).json({ error: "User already exists" });
     }
 
     //hash password using bcrypt
-    const user = req.body;
-    const hash = bcrypt.hashSync(req.body.password, 12);
-    user.password = hash;
+    const hash = bcrypt.hashSync(newUser.password, 12);
+    newUser.password = hash;
 
     // Create new user
-    const newUser = {
-      ...user
-    };
-
     const response = await db.signup(newUser);
 
     //Create a json web token with username and send back to client
