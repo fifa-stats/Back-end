@@ -15,11 +15,8 @@ const validateSignupInput = require("../validation/signup");
 const jwtKey = process.env.SECRET;
 
 function generateToken(user) {
-  const username = user.fname + " " + user.lname;
   const payload = {
-    id: user.id,
-    username,
-    email: user.email
+    ...user
   };
 
   const options = {
