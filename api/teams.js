@@ -29,7 +29,20 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const newTeam = await db.createTeam(req.body.name, req.user.id);
+      //Check if team already exists
+      const teams = await db.findTeams(req.user.id);
+      const teamNames = teams.map(team => team.name);
+      if (teamNames.includes(req.body.name.toLowerCase())) {
+        return res.status(400).json({
+          message: "Team already exists",
+          error: "Duplicate team name"
+        });
+      }
+
+      const newTeam = await db.createTeam(
+        req.body.name.toLowerCase(),
+        req.user.id
+      );
       res.status(201).json(newTeam[0]);
     } catch (error) {
       res
@@ -48,7 +61,28 @@ router.delete(
   async (req, res) => {
     try {
       const response = await db.deleteTeam(req.params.id);
-      res.status(200).json(response);
+      res.status(200).json({ message: "Team deleted successfully" });
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: "Failed to delete team", error: error.message });
+    }
+  }
+);
+
+// @route DELETE api/teams/:id/delete/:id
+// @desc Delete team
+// @access Private
+router.delete(
+  "/:id/delete/:player_id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const response = await db.deletePlayer(
+        req.params.id,
+        req.params.player_id
+      );
+      res.status(200).json({ message: "Player deleted successfully" });
     } catch (error) {
       res
         .status(400)
