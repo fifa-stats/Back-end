@@ -9,6 +9,7 @@ exports.up = function(knex, Promise) {
       .references("id")
       .inTable("users")
       .onDelete("cascade");
+    teams.unique(["name", "user_id"]);
   });
 };
 
