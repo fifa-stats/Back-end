@@ -33,9 +33,19 @@ const deleteTeam = async id => {
   return deletedTeam;
 };
 
+const getPlayersByTeam = async team_id => {
+  const players = await db("players")
+    .select("players.*")
+    .innerJoin("custom_team", "players.id", "custom_team.player_id")
+    .where("custom_team.team_id", team_id);
+
+  return players;
+};
+
 module.exports = {
   findTeams,
   findDefaultTeams,
   createTeam,
-  deleteTeam
+  deleteTeam,
+  getPlayersByTeam
 };
