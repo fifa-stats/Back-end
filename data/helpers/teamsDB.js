@@ -44,7 +44,7 @@ const getPlayersByTeam = async team_id => {
 
 const getPlayersByDefaultTeam = async team_name => {
   const players = await db("players")
-    .select("id")
+    .select()
     .where(db.raw('LOWER("Club") = ?', team_name));
 
   return players;
