@@ -33,6 +33,32 @@ router.get("/default", async (req, res) => {
   }
 });
 
+// @route GET api/teams/:team_id
+// @desc Get all players from a team
+// @access Private
+router.get(
+  "/:team_id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      //Find teams owned by current user
+      const teams = await db.findTeams(req.user.id);
+      const ids = teams.map(team => team.id);
+
+      if (!ids.includes(Number(req.params.team_id))) {
+        return res.status(400).json({ message: "Team not found" });
+      }
+
+      const players = await db.getPlayersByTeam(req.params.team_id);
+      res.status(200).json(players);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: "Failed to fetch players", error: error.message });
+    }
+  }
+);
+
 // @route POST api/teams/
 // @desc Create new team for current user
 // @access Private
