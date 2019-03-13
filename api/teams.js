@@ -112,6 +112,48 @@ router.post(
   }
 );
 
+// @route POST api/teams/copy
+// @desc Copy a default team
+// @access Private
+router.post(
+  "/copy",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      //Check if team already exists
+      const teams = await db.findTeams(req.user.id);
+      const teamNames = teams.map(team => team.name);
+      if (teamNames.includes(req.body.name.toLowerCase())) {
+        return res.status(400).json({
+          message: "Team already exists",
+          error: "Duplicate team name"
+        });
+      }
+
+      //Create new team in table
+      const newTeam = await db.createTeam(
+        req.body.name.toLowerCase(),
+        req.user.id
+      );
+      //Get all players from the default team
+      const players = await db.getPlayersByDefaultTeam(req.body.name);
+
+      const rows = players.map(player => {
+        return {
+          team_id: newTeam[0].id,
+          player_id: player.id
+        };
+      });
+      const response = await db.addPlayer(rows);
+      res.status(201).json(newTeam);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: "Failed to create team", error: error.message });
+    }
+  }
+);
+
 // @route DELETE api/teams/:id
 // @desc Delete team
 // @access Private
