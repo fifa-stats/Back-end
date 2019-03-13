@@ -59,12 +59,14 @@ router.get(
   }
 );
 
-// @route GET api/teams/default/:id
+// @route GET api/teams/default/:team_name
 // @desc Get all players from a default team
 // @access Public
 router.get("/default/:team_name", async (req, res) => {
   try {
-    const players = await db.getPlayersByDefaultTeam(req.params.team_name);
+    const players = await db.getPlayersByDefaultTeam(
+      req.params.team_name.toLowerCase()
+    );
     res.status(200).json(players);
   } catch (error) {
     res.status(400).json({ error: "Failed to fetch players" });
