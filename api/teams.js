@@ -21,6 +21,18 @@ router.get(
   }
 );
 
+// @route GET api/teams/default
+// @desc Get all default teams
+// @access Private
+router.get("/default", async (req, res) => {
+  try {
+    const teams = await db.findDefaultTeams();
+    res.status(200).json(teams);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to fetch teams" });
+  }
+});
+
 // @route POST api/teams/
 // @desc Create new team for current user
 // @access Private
