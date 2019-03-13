@@ -50,11 +50,26 @@ const getPlayersByDefaultTeam = async team_name => {
   return players;
 };
 
+const addPlayer = async player => {
+  const query = await db("custom_team").insert(player);
+  return 1;
+};
+
+const deletePlayer = async (team_id, player_id) => {
+  const query = await db("custom_team")
+    .del()
+    .where({ team_id: team_id, player_id: player_id });
+
+  return 1;
+};
+
 module.exports = {
   findTeams,
   findDefaultTeams,
   createTeam,
   deleteTeam,
   getPlayersByTeam,
-  getPlayersByDefaultTeam
+  getPlayersByDefaultTeam,
+  addPlayer,
+  deletePlayer
 };
