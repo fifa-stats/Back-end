@@ -9,6 +9,14 @@ const findTeams = async userId => {
   return teams;
 };
 
+const findDefaultTeams = async () => {
+  const teams = await db("players")
+    .distinct("Club")
+    .select();
+
+  return teams;
+};
+
 const createTeam = async (name, user_id) => {
   const team = await db("teams")
     .insert({ name: name, user_id: user_id })
@@ -27,6 +35,7 @@ const deleteTeam = async id => {
 
 module.exports = {
   findTeams,
+  findDefaultTeams,
   createTeam,
   deleteTeam
 };
