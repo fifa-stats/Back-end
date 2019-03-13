@@ -90,6 +90,28 @@ router.post(
   }
 );
 
+// @route POST api/teams/:id/add
+// @desc Add player to team
+// @access Private
+router.post(
+  "/:team_id/add",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const player = {
+        team_id: req.params.team_id,
+        player_id: req.body.player_id
+      };
+      const response = await db.addPlayer(player);
+      res.status(200).json({ message: "Player added successfully" });
+    } catch (error) {
+      res
+        .status(400)
+        .json({ message: "Failed to add player", error: error.message });
+    }
+  }
+);
+
 // @route DELETE api/teams/:id
 // @desc Delete team
 // @access Private
