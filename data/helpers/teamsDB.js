@@ -42,10 +42,19 @@ const getPlayersByTeam = async team_id => {
   return players;
 };
 
+const getPlayersByDefaultTeam = async team_name => {
+  const players = await db("players")
+    .select("id")
+    .where(db.raw('LOWER("Club") = ?', team_name));
+
+  return players;
+};
+
 module.exports = {
   findTeams,
   findDefaultTeams,
   createTeam,
   deleteTeam,
-  getPlayersByTeam
+  getPlayersByTeam,
+  getPlayersByDefaultTeam
 };
