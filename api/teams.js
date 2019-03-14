@@ -159,7 +159,7 @@ router.post(
         };
       });
       const response = await db.addPlayer(rows);
-      res.status(201).json(newTeam);
+      res.status(201).json(newTeam[0]);
     } catch (error) {
       res
         .status(400)
@@ -182,6 +182,28 @@ router.delete(
       res
         .status(400)
         .json({ message: "Failed to delete team", error: error.message });
+    }
+  }
+);
+
+// @route UPDATE api/teams/:id
+// @desc Update team name
+// @access Private
+router.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const user_id = req.user.id;
+    const team_id = req.params.id;
+    const newName = req.body.name.toLowerCase();
+    try {
+      const newTeam = await db.updateTeam(team_id, user_id, newName);
+      res.status(200).json(newTeam);
+    } catch (error) {
+      res.status(400).json({
+        message: "Failed to update team's name",
+        error: error.message
+      });
     }
   }
 );
