@@ -11,7 +11,7 @@ const players = require("./api/players");
 const app = express();
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000"
+  origin: [process.env.FRONTEND_URL, "http://localhost:3000"]
 };
 
 //middlewares
