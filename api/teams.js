@@ -207,4 +207,28 @@ router.delete(
   }
 );
 
+// @route POST api/teams/suggestion
+// @desc Analyse and return a suggestion for team
+// @access Private
+router.post(
+  "/suggestion",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    //Create a spawn process
+    const spawn = require("child_process").spawn;
+    const py = spawn("python", ["./script/pythonscript.py"]);
+    const data = req.body.players;
+
+    //Parse the data returned from python script and send it to client
+    py.stdout.on("data", function(data) {
+      const response = JSON.parse(data);
+      res.status(200).json(response);
+    });
+
+    //Pass the data to the python script as a string
+    py.stdin.write(JSON.stringify(data));
+    py.stdin.end();
+  }
+);
+
 module.exports = router;
