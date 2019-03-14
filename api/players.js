@@ -9,7 +9,8 @@ const router = express.Router();
 // @access Public
 router.get("/", async (req, res) => {
   try {
-    const players = await db.fetchPlayers();
+    const offset = req.query.page;
+    const players = await db.fetchPlayers(offset);
     res.status(200).json(players);
   } catch (error) {
     res
