@@ -19,4 +19,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// @route POST api/players/
+// @desc Search players or teams
+// @access Public
+router.post("/", async (req, res) => {
+  const searchTerm = req.body.searchTerm.toLowerCase();
+  try {
+    const response = await db.searchPlayersOrTeams(searchTerm);
+    res.status(200).json(response);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Failed to fetch players", error: error.message });
+  }
+});
+
 module.exports = router;

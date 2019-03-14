@@ -33,6 +33,15 @@ const deleteTeam = async id => {
   return deletedTeam;
 };
 
+const updateTeam = async (team_id, user_id, new_name) => {
+  const updatedTeam = await db("teams")
+    .where({ id: team_id, user_id: user_id })
+    .update("name", new_name)
+    .returning(["id", "name"]);
+
+  return updatedTeam;
+};
+
 const getPlayersByTeam = async team_id => {
   const players = await db("players")
     .select("players.*")
@@ -45,7 +54,7 @@ const getPlayersByTeam = async team_id => {
 const getPlayersByDefaultTeam = async team_name => {
   const players = await db("players")
     .select()
-    .where(db.raw('LOWER("Club") = ?', team_name));
+    .where(db.raw('LOWER("Club") = ?', team_name.toLowerCase()));
 
   return players;
 };
@@ -71,5 +80,6 @@ module.exports = {
   getPlayersByTeam,
   getPlayersByDefaultTeam,
   addPlayer,
-  deletePlayer
+  deletePlayer,
+  updateTeam
 };
