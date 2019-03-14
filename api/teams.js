@@ -216,7 +216,8 @@ router.post(
   (req, res) => {
     //Create a spawn process
     const spawn = require("child_process").spawn;
-    const py = spawn("python", ["./script/pythonscript.py"]);
+    const path = process.env.PYPATH;
+    const py = spawn("python", [path]);
     const data = req.body.players;
 
     //Parse the data returned from python script and send it to client
