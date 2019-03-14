@@ -10,6 +10,21 @@ const fetchPlayers = async offset => {
   return players;
 };
 
+const searchPlayersOrTeams = async searchTerm => {
+  const players = await db("players")
+    .select()
+    .where(db.raw('LOWER("Name") like ?', `%${searchTerm}%`));
+
+  const teams = await db("players")
+    .select()
+    .where(db.raw('LOWER("Club") like ?', `%${searchTerm}%`));
+
+  result = { players, teams };
+
+  return result;
+};
+
 module.exports = {
-  fetchPlayers
+  fetchPlayers,
+  searchPlayersOrTeams
 };
