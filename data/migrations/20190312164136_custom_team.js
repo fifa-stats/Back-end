@@ -15,7 +15,6 @@ exports.up = function(knex, Promise) {
       .references("id")
       .inTable("players")
       .onDelete("cascade");
-    table.decimal("OvervalueRatio", 3, 2);
     table.unique(["team_id", "player_id"]);
   });
 };

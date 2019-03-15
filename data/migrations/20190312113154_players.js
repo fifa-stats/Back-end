@@ -7,8 +7,8 @@ exports.up = function(knex, Promise) {
     players.string("Nationality");
     players.string("Club");
     players.string("Position", 5);
-    players.integer("Height");
-    players.integer("Weight");
+    players.string("Height", 5);
+    players.string("Weight", 10);
     players.integer("Overall");
     players.integer("Potential");
     players.integer("Value");
@@ -36,6 +36,25 @@ exports.up = function(knex, Promise) {
     players.integer("GKKicking");
     players.integer("GKPositioning");
     players.integer("GKReflexes");
+    players.string("ClubLogo");
+    players.integer("SkillMoves");
+    players.string("WorkRate");
+    players.integer("Volleys");
+    players.integer("Curve");
+    players.integer("FKAccuracy");
+    players.integer("LongPassing");
+    players.integer("BallControl");
+    players.integer("Acceleration");
+    players.integer("Reactions");
+    players.integer("Balance");
+    players.integer("Jumping");
+    players.integer("Strength");
+    players.integer("Aggression");
+    players.integer("Penalties");
+    players.integer("Composure");
+    players.string("FieldPosition");
+    players.decimal("OvervalueRatio", 3, 2);
+    players.integer("FieldPositionNum");
   });
 };
 
