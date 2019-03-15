@@ -2,12 +2,14 @@ import sys
 import json
 import pandas as pd
 import numpy as np
+import os
 from sklearn.preprocessing import LabelEncoder
 
 
 def main():
     # Read data from request
-    json_blob = json.loads(sys.stdin.readlines()[0])
+    # json_blob = json.loads(sys.stdin.readlines()[0])
+    json_blob = json.loads(sys.argv[1])
 
     # reading JSON file
     df_json = pd.DataFrame(json_blob)

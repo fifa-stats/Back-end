@@ -239,26 +239,18 @@ router.post(
     //Create a spawn process
     const spawn = require("child_process").spawn;
     const path = process.env.PYPATH;
-    const py = spawn("python", [path]);
     const data = req.body.players;
+    const py = spawn("python", [path, JSON.stringify(data)]);
 
     //Parse the data returned from python script and send it to client
     py.stdout.on("data", function(data) {
-      // const response = JSON.parse(data);
-      res.write(data.toString());
+      const response = JSON.parse(data);
+      res.status(200).json(response);
     });
 
     py.stderr.on("data", function(data) {
       res.status(500).send(data.toString());
     });
-
-    py.stdout.on("end", function(data) {
-      res.end("end");
-    });
-
-    //Pass the data to the python script as a string
-    py.stdin.write(JSON.stringify(data));
-    py.stdin.end();
   }
 );
 
