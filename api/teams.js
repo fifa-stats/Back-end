@@ -248,6 +248,10 @@ router.post(
       res.status(200).json(response);
     });
 
+    py.stderr.on("data", function(data) {
+      res.status(500).send(data.toString());
+    });
+
     //Pass the data to the python script as a string
     py.stdin.write(JSON.stringify(data));
     py.stdin.end();

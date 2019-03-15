@@ -2,27 +2,26 @@ import sys
 import json
 import pandas as pd
 import numpy as np
-import os
 from sklearn.preprocessing import LabelEncoder
 
 
 def main():
     # Read data from request
-    test_team = json.loads(sys.stdin.readlines()[0])
+    json_blob = json.loads(sys.stdin.readlines()[0])
 
     # reading JSON file
-    df_json = pd.DataFrame(test_team)
+    df_json = pd.DataFrame(json_blob)
 
     # Entire Fifa19 dataframe
-    data = pd.read_csv('//app//data//players_data.csv')
+    data = pd.read_csv('/app/data/players_data.csv')
 
     df_teams = df_json
 
     # ### Getting Club players
     def get_club_players(df_teams):
-
+        
         df_club_list = df_teams[['Name','Position','OvervalueRatio','Overall','Potential','Wage']]
-
+        
         sort_club_list = df_club_list.sort_values(by='OvervalueRatio', ascending=False)
 
         df_top_2_rated_players = sort_club_list.head(2)
@@ -31,12 +30,8 @@ def main():
 
         return df_club_list, df_top_2_rated_players, df_bottom_2_rated_players
 
-    df_attributes = data[['FieldPositionNum', 'Overall', 'Potential', 'Crossing', 'Finishing',
-                            'HeadingAccuracy', 'ShortPassing', 'Volleys', 'Dribbling', 'Curve',
-                            'FKAccuracy', 'LongPassing', 'BallControl', 'Acceleration', 'SprintSpeed',
-                            'Agility', 'Reactions', 'Balance', 'ShotPower', 'Jumping', 'Stamina',
-                            'Strength', 'LongShots', 'Aggression', 'Interceptions', 'Positioning',
-                            'Vision', 'Penalties', 'Composure', 'Marking']]
+
+    df_attributes = data[['FieldPositionNum','Overall','Potential','Crossing', 'Finishing','HeadingAccuracy','ShortPassing','Volleys','Dribbling','Curve','FKAccuracy','LongPassing','BallControl','Acceleration','SprintSpeed', 'Agility','Reactions','Balance','ShotPower','Jumping','Stamina','Strength','LongShots','Aggression','Interceptions','Positioning','Vision', 'Penalties','Composure','Marking']]
 
     # Recommender System
 
@@ -70,7 +65,7 @@ def main():
             player_attributes = df_attributes.iloc[input_player_index]
 
             # filtering attributes logic:
-            filtered_attributes = df_attributes[(df_attributes['Overall'] > p_overall-10)
+            filtered_attributes = df_attributes[(df_attributes['Overall'] > p_overall-10) 
                                             & (df_attributes['Potential'] > p_potential-10)
                                             & (df_attributes['FieldPositionNum'] == p_position)]
 
@@ -87,22 +82,22 @@ def main():
                     # player 1 - suggested trades
                     trades_p1.append(data[data.index==suggested_players.index[i]][cols].values)
                 else:
-                    # player 2 - suggested trades
+                    # player 2 - suggested trades                 
                     trades_p2.append(data[data.index==suggested_players.index[i]][cols].values)
 
         cols1 = ['Name', 'Position', 'OvervalueRatio', 'Overall', 'Potential', 'Wage']
         # suggested trades DF for player 1 - dropping 1st row (most positively correlated = same as player 1)
         trades_p1_df = pd.DataFrame(np.row_stack(trades_p1), columns=cols1)
         trades_p1_df = trades_p1_df.drop(trades_p1_df.index[0]).reset_index(drop=True)
-
+        
         # suggested trades DF for player 2 - dropping 1st row (most positively correlated = same as player 2)
         trades_p2_df = pd.DataFrame(np.row_stack(trades_p2), columns=cols1)
         trades_p2_df = trades_p2_df.drop(trades_p2_df.index[0]).reset_index(drop=True)
-
+        
         #adding 'Post-trade Leftover Wage' column to each returned DF
         trades_p1_df['Post-tradeLeftoverWage'] = players_wages[0] - trades_p1_df['Wage']
         trades_p2_df['Post-tradeLeftoverWage'] = players_wages[1] - trades_p2_df['Wage']
-
+        
         return top_2, bottom_2, trades_p1_df, trades_p2_df
 
     # See comment line inside of function just below
@@ -112,6 +107,7 @@ def main():
         replacements_p2 = []
         players_wages = []
 
+        
         all_players, top_2, bottom_2 = get_club_players(df_teams)  # df_club_list, df_top_2_players, df_bottom_2_players
 
         # looping throught 2 player names in 'top_2'
@@ -134,7 +130,7 @@ def main():
             player_attributes = df_attributes.iloc[input_player_index]
 
             # filtering weak attributes logic:
-            filtered_weak_attributes = df_attributes[(df_attributes['Overall'] < 90)
+            filtered_weak_attributes = df_attributes[(df_attributes['Overall'] < 90) 
                                                     & (df_attributes['Potential'] > p_potential)
                                                     & (df_attributes['Potential'] < 89)
                                                     & (df_attributes['FieldPositionNum'] == p_position)]
@@ -148,23 +144,23 @@ def main():
                     # player 1 - suggested replacements
                     replacements_p1.append(data[data.index==suggested_players.index[i]][cols].values)
                 else:
-                    # player 2 - suggested replacements
+                    # player 2 - suggested replacements                 
                     replacements_p2.append(data[data.index==suggested_players.index[i]][cols].values)
 
         cols1 = ['Name', 'Position', 'OvervalueRatio', 'OverallRating', 'PotentialRating', 'Wage']
-
+        
         # suggested replacements DF for player 1 - dropping 1st row (most positively correlated = same as player 1)
         replacements_p1_df = pd.DataFrame(np.row_stack(replacements_p1), columns=cols1)
         replacements_p1_df = replacements_p1_df.drop(replacements_p1_df.index[0]).reset_index(drop=True)
-
+        
         # suggested replacements DF for player 2 - dropping 1st row (most positively correlated = same as player 2)
         replacements_p2_df = pd.DataFrame(np.row_stack(replacements_p2), columns=cols1)
         replacements_p2_df = replacements_p2_df.drop(replacements_p2_df.index[0]).reset_index(drop=True)
-
+        
         #adding 'Post-trade Leftover Wage' column to each returned DF
         replacements_p1_df['Post-tradeLeftoverWage'] = players_wages[0] - replacements_p1_df['Wage']
         replacements_p2_df['Post-tradeLeftoverWage'] = players_wages[1] - replacements_p2_df['Wage']
-
+        
         return replacements_p1_df, replacements_p2_df
 
     # All tables
@@ -173,24 +169,25 @@ def main():
     replacements_p1_df, replacements_p2_df = get_replacement_players(df_teams)
 
     # turning all tables into JSON
-    top_2 = top_2.to_json(orient='records')
-    bottom_2 = bottom_2.to_json(orient='records')
-    trades_p1_df = trades_p1_df.to_json(orient='records')
-    trades_p2_df = trades_p2_df.to_json(orient='records')
-    replacements_p1_df = replacements_p1_df.to_json(orient='records')
-    replacements_p2_df = replacements_p2_df.to_json(orient='records')
+    top_2 = top_2.to_dict('records')
+    bottom_2 = bottom_2.to_dict('records')
+    trades_p1_df = trades_p1_df.to_dict('records')
+    trades_p2_df = trades_p2_df.to_dict('records')
+    replacements_p1_df = replacements_p1_df.to_dict('records')
+    replacements_p2_df = replacements_p2_df.to_dict('records')
+
 
     def all_dfs_json():
         json_dict = dict({'top2overvalued': top_2,
-                        'suggestedtrades' : [trades_p1_df, trades_p2_df],
+                        'suggestedtrades' : [trades_p1_df, trades_p2_df], 
                         'bottom2weak': bottom_2,
                         'suggestedreplacements': [replacements_p1_df, replacements_p2_df]})
-        return json.dumps(json_dict)
-
-    print(all_dfs_json());
+        return json_dict
+    
+    print(json.dumps(all_dfs_json()))
     sys.stdout.flush()
 
 
-# start process
+#start process
 if __name__ == '__main__':
     main()
