@@ -244,12 +244,14 @@ router.post(
 
     //Parse the data returned from python script and send it to client
     py.stdout.on("data", function(data) {
-      const response = JSON.parse(data);
-      res.status(200).json(response);
+      // const response = JSON.parse(data);
+      res.status(200).send(data.toString());
+      return;
     });
 
     py.stderr.on("data", function(data) {
       res.status(500).send(data.toString());
+      return;
     });
 
     //Pass the data to the python script as a string
