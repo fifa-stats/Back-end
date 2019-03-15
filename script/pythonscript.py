@@ -1,20 +1,17 @@
-import sys, json, pandas as pd, numpy as np
+import sys, json, pandas as pd, numpy as np, os
 from sklearn.preprocessing import LabelEncoder
 
 def main():
-    pd.set_option('display.max_rows', 1000)
-    pd.set_option('display.max_columns', 500)
-    pd.set_option('display.width', 1000)
-
     # Read data from request
     json_blob = json.loads(sys.stdin.readlines()[0])
 
+    
     # reading JSON file
     test_team = json.loads(json_blob)
     df_json = pd.DataFrame(test_team)
 
     # Entire Fifa19 dataframe
-    data = pd.read_csv('/app/data/players_data.csv')
+    data = pd.read_csv('\app\data\players_data.csv')
 
     df_teams = df_json
 
@@ -170,18 +167,18 @@ def main():
         
         return replacements_p1_df, replacements_p2_df
 
-        # All tables
-        allplayers, top2overvalued, bottom2weak = get_club_players(df_teams)
-        top_2, bottom_2, trades_p1_df, trades_p2_df = get_suggested_trades(df_teams)
-        replacements_p1_df, replacements_p2_df = get_replacement_players(df_teams)
+    # All tables
+    allplayers, top2overvalued, bottom2weak = get_club_players(df_teams)
+    top_2, bottom_2, trades_p1_df, trades_p2_df = get_suggested_trades(df_teams)
+    replacements_p1_df, replacements_p2_df = get_replacement_players(df_teams)
 
-        # turning all tables into JSON
-        top_2 = top_2.to_json(orient='records')
-        bottom_2 = bottom_2.to_json(orient='records')
-        trades_p1_df = trades_p1_df.to_json(orient='records')
-        trades_p2_df = trades_p2_df.to_json(orient='records')
-        replacements_p1_df = replacements_p1_df.to_json(orient='records')
-        replacements_p2_df = replacements_p2_df.to_json(orient='records')
+    # turning all tables into JSON
+    top_2 = top_2.to_json(orient='records')
+    bottom_2 = bottom_2.to_json(orient='records')
+    trades_p1_df = trades_p1_df.to_json(orient='records')
+    trades_p2_df = trades_p2_df.to_json(orient='records')
+    replacements_p1_df = replacements_p1_df.to_json(orient='records')
+    replacements_p2_df = replacements_p2_df.to_json(orient='records')
 
 
     def all_dfs_json():
